@@ -28,16 +28,12 @@ const CircularPomodoroView = (props: ICircularPomodoroViewProps) => {
         clockwise = false,
         labelArea = <div>labelArea</div>,
     } = props;
-    let remainingTime = targetSeconds.valueOf() - elapsedSeconds.valueOf();
+    let remainingSeconds = targetSeconds - elapsedSeconds;
 
     return (
         <div className="select-none flex justify-center items-center w-64">
             <CircularProgress
-                filledPercent={
-                    isRunning
-                        ? (remainingTime - 900) / targetSeconds.valueOf()
-                        : remainingTime / targetSeconds.valueOf()
-                }
+                filledPercent={remainingSeconds / targetSeconds}
                 clockwise={clockwise}
                 thickness={0.03}
                 animationDuration={isRunning ? "1s" : "0.15s"}
@@ -47,7 +43,9 @@ const CircularPomodoroView = (props: ICircularPomodoroViewProps) => {
                 {labelArea}
                 <div className="text-3xl">
                     {formatTime(
-                        remainingTime < 0 ? remainingTime * -1 : remainingTime
+                        remainingSeconds < 0
+                            ? remainingSeconds * -1
+                            : remainingSeconds
                     )}
                 </div>
                 <div className="flex flex-row gap-4">

@@ -1,7 +1,6 @@
 "use client";
 
-import useStopwatch from "../hooks/useStopwatch";
-import { TimerCallbacks } from "../types/TimerCallbacks";
+import useStopwatch, { TimerCallbacks } from "../hooks/useStopwatch";
 import CircularPomodoroView from "./CircularPomodoroView";
 
 const callbacks: TimerCallbacks = {
@@ -43,10 +42,10 @@ const CircularPomodoroTimer = () => {
 
     return (
         <CircularPomodoroView
-            targetSeconds={60000}
-            isRunning={false}
+            targetSeconds={60}
+            isRunning={isRunning}
             isStarted={isStarted}
-            elapsedSeconds={elapsedMs}
+            elapsedSeconds={elapsedMs / 1000}
             onStartClick={function (): void {
                 start();
             }}

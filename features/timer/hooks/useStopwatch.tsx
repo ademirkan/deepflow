@@ -1,8 +1,20 @@
 "use client";
 
 import { useRef, useEffect, useState } from "react";
-import { TimerCallbacks } from "../types/TimerCallbacks";
-import { TimerEvent } from "../types/TimerEvent";
+
+export type TimerCallbacks = {
+    onStart?: (now: Date, elapsedSeconds?: number) => void; // called on initial timer start
+    onTick?: (now: Date, elapsedSeconds: number, startTime: Date) => void; // called on each tick interval
+    onResume?: (now: Date, elapsedSeconds: number, startTime: Date) => void; // called on each subsequent resume
+    onPause?: (now: Date, elapsedSeconds: number, startTime: Date) => void; // called on each timer pause
+    onReset?: (now: Date, elapsedSeconds: number, startTime: Date) => void; // called on timer reset
+    onTickEvents?: Array<TimerEvent>; // scheduled timer events: (time, callback)
+};
+
+export type TimerEvent = {
+    timeElapsed: number;
+    callback: (now: Date, elapsedTime: number, startTime: Date) => void;
+};
 
 export default function useStopwatch(
     callbacks: TimerCallbacks,

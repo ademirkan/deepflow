@@ -2,9 +2,7 @@
  * Returns formatted time (M)MM:SS
  * @param {int} seconds
  */
-export function formatTime(time: number) {
-    let seconds = time / 1000;
-
+export function formatTime(seconds: number) {
     seconds = Math.round(seconds); // incase seconds is not a whole integer
     const minutes = Math.floor(seconds / 60);
     let minuteString = minutes.toString();
