@@ -1,25 +1,22 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import TodoList from "./TodoList";
 import CreateTodoItem from "./CreateTodoItem";
-
-type Todo = {
-    id: number;
-    text: string;
-    completed: boolean;
-};
-
-const initialTodos: Todo[] = [
-    { id: 1, text: "Learn React", completed: false },
-    { id: 2, text: "Build a Todo App", completed: false },
-];
+import { addTodo, fetchTodos } from "@/service/todoService";
+import { Todo } from "@/types/todoTypes";
 
 const TodoContainer: React.FC = () => {
-    const [todos, setTodos] = useState<Todo[]>(initialTodos);
+    const [todos, setTodos] = useState<Todo[]>([]);
     const [isAdding, setIsAdding] = useState(false);
 
-    const handleToggle = (id: number) => {
+    useEffect(() => {
+        fetchTodos().then((todos) => {
+            setTodos(todos);
+        });
+    }, []);
+
+    const handleToggle = (id: string) => {
         setTodos((prevTodos) => {
             return prevTodos.map((todo) => {
                 if (todo.id === id) {
@@ -31,11 +28,24 @@ const TodoContainer: React.FC = () => {
     };
 
     function handleAddTodo(text: string): void {
+        const prevTodos = todos;
+        setIsAdding(false);
         setTodos((prevTodos) => [
             ...prevTodos,
-            { id: Date.now(), text, completed: false },
+            { id: Date.now().toString(), text, completed: false, uid: "" },
         ]);
-        setIsAdding(false);
+
+        addTodo({ text, uid: "" })
+            .then((todo) => {
+                setTodos((prevTodos) =>
+                    prevTodos.map((t) => (t.id === todo.id ? todo : t))
+                );
+                console.log(todo);
+            })
+            .catch((error) => {
+                console.error(error);
+                setTodos(prevTodos);
+            });
     }
 
     return (

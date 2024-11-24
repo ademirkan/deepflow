@@ -1,15 +1,10 @@
-import React, { useState } from "react";
+import React from "react";
 import TodoItem from "./TodoItem";
-
-type Todo = {
-    id: number;
-    text: string;
-    completed: boolean;
-};
+import { Todo } from "@/types/todoTypes";
 
 type TodoListProps = {
     todos: Todo[];
-    onToggle: (id: number) => void;
+    onToggle: (id: string) => void;
 };
 
 const TodoList: React.FC<TodoListProps> = ({ todos, onToggle }) => {
