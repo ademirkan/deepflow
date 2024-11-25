@@ -1,13 +1,13 @@
 "use client";
-
 import Link from "next/link";
 import { useMediaQuery } from "react-responsive";
-
+import { googleSignIn, logOut } from "@/service/authService";
+import { useAuth } from "@/context/useAuth";
 export default function Header() {
     const isDesktopOrLaptop = useMediaQuery({
         query: "(min-width: 1224px)",
     });
-
+    const { user } = useAuth();
     return (
         <header className="flex justify-between gap-[10px] items-center w-full">
             <div className="flex flex-row gap-6 items-center">
@@ -38,7 +38,15 @@ export default function Header() {
 
                 <nav>nav</nav>
             </div>
-            <div>yeet</div>
+
+            {user ? (
+                <div>
+                    <div>{user.email}</div>
+                    <button onClick={logOut}>Sign out</button>
+                </div>
+            ) : (
+                <button onClick={googleSignIn}>Sign in with Google</button>
+            )}
         </header>
     );
 }
