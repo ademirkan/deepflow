@@ -6,6 +6,7 @@ import {
     addDoc,
     deleteDoc,
     doc,
+    updateDoc,
 } from "firebase/firestore";
 
 // Fetch all todos
@@ -22,17 +23,24 @@ export const fetchTodos = async (): Promise<Todo[]> => {
 export const addTodo = async (todo: {
     text: string;
     uid: string;
-}): Promise<Todo> => {
+}): Promise<string> => {
     const todosCollection = collection(db, "todos");
     const docRef = await addDoc(todosCollection, {
         ...todo,
         completed: false,
     });
-    return { id: docRef.id, ...todo, completed: false };
+    return docRef.id;
 };
 
-// Delete a todo
-export const deleteTodo = async (id: string): Promise<void> => {
+// Toggle a todo completion
+export const updateTodoCompletion = async (
+    id: string,
+    completed: boolean
+): Promise<void> => {
     const todoDoc = doc(db, "todos", id);
-    await deleteDoc(todoDoc);
+    if (!todoDoc) {
+        return Promise.reject("Todo not found");
+    }
+    await updateDoc(todoDoc, { completed });
+    return Promise.resolve();
 };

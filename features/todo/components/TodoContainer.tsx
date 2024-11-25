@@ -3,7 +3,11 @@
 import React, { useEffect, useState } from "react";
 import TodoList from "./TodoList";
 import CreateTodoItem from "./CreateTodoItem";
-import { addTodo, fetchTodos } from "@/service/todoService";
+import {
+    addTodo,
+    fetchTodos,
+    updateTodoCompletion,
+} from "@/service/todoService";
 import { Todo } from "@/types/todoTypes";
 
 const TodoContainer: React.FC = () => {
@@ -16,37 +20,61 @@ const TodoContainer: React.FC = () => {
         });
     }, []);
 
-    const handleToggle = (id: string) => {
-        setTodos((prevTodos) => {
-            return prevTodos.map((todo) => {
-                if (todo.id === id) {
-                    return { ...todo, completed: !todo.completed };
-                }
-                return todo;
-            });
+    const handleToggle = (id: string): void => {
+        // Get current todo status
+        const currentTodoStatus = todos.find((todo) => todo.id === id)
+            ?.completed as boolean;
+
+        // Optimistic update
+        setTodos((prevTodos) =>
+            prevTodos.map((todo) =>
+                todo.id === id
+                    ? { ...todo, completed: !currentTodoStatus }
+                    : todo
+            )
+        );
+
+        // Update server
+        updateTodoCompletion(id, !currentTodoStatus).catch((error: Error) => {
+            console.error(error);
+            // Rollback
+            setTodos((prevTodos) =>
+                prevTodos.map((todo) =>
+                    todo.id === id
+                        ? { ...todo, completed: currentTodoStatus }
+                        : todo
+                )
+            );
         });
     };
 
-    function handleAddTodo(text: string): void {
-        const prevTodos = todos;
+    const handleAddTodo = (text: string): void => {
         setIsAdding(false);
+
+        // Optimistic update
+        const tempId = Date.now().toString();
         setTodos((prevTodos) => [
             ...prevTodos,
-            { id: Date.now().toString(), text, completed: false, uid: "" },
+            { id: tempId, text, completed: false, uid: "" },
         ]);
 
+        // Add to server
         addTodo({ text, uid: "" })
-            .then((todo) => {
-                setTodos((prevTodos) =>
-                    prevTodos.map((t) => (t.id === todo.id ? todo : t))
-                );
-                console.log(todo);
+            .then((todoId) => {
+                // Update optimistic update to reflect server id
+                const todoToUpdate = todos.find((todo) => todo.id === tempId);
+                if (todoToUpdate) {
+                    todoToUpdate.id = todoId;
+                }
             })
             .catch((error) => {
+                // Rollback
                 console.error(error);
-                setTodos(prevTodos);
+                setTodos((prevTodos) =>
+                    prevTodos.filter((todo) => todo.id !== tempId)
+                );
             });
-    }
+    };
 
     return (
         <div>
