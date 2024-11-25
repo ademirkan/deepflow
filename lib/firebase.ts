@@ -9,6 +9,7 @@ import {
     signInWithPopup,
     onAuthStateChanged,
     signOut,
+    signInWithRedirect,
 } from "firebase/auth";
 
 const firebaseConfig = {
@@ -31,6 +32,7 @@ export const auth = getAuth(app);
 export const googleProvider = new GoogleAuthProvider(); // Google Auth Provider
 export {
     signInWithPopup,
+    signInWithRedirect,
     signInWithEmailAndPassword,
     createUserWithEmailAndPassword,
     onAuthStateChanged,

@@ -46,6 +46,11 @@ export const logOut = async () => {
 };
 
 export const googleSignIn = async () => {
-    const userCredential = await signInWithPopup(auth, googleProvider);
-    return userCredential.user;
+    try {
+        const userCredential = await signInWithPopup(auth, googleProvider);
+        return userCredential.user;
+    } catch (error) {
+        const errorMessage = getErrorMessage(error);
+        throw new Error(errorMessage);
+    }
 };
