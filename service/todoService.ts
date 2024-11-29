@@ -1,30 +1,34 @@
 import { Todo, TodoRepository } from "@/types/todoTypes";
 import { FirebaseTodoRepository } from "@/repositories/firebaseTodoRepository";
-// You can inject a different repository implementation here
-const todoRepository: TodoRepository = new FirebaseTodoRepository();
 
-export const addTodo = async (text: string): Promise<Todo> => {
-    return todoRepository.add(text);
-};
+class TodoService {
+    private todoRepository: TodoRepository;
 
-export const fetchTodos = async () => {
-    return todoRepository.getAll();
-};
+    constructor(todoRepository: TodoRepository) {
+        this.todoRepository = todoRepository;
+    }
 
-export const updateTodoCompletion = async (
-    id: string,
-    completed: boolean
-): Promise<void> => {
-    return todoRepository.updateCompletion(id, completed);
-};
+    async addTodo(text: string): Promise<Todo> {
+        return this.todoRepository.add(text);
+    }
 
-export const updateTodoText = async (
-    id: string,
-    text: string
-): Promise<void> => {
-    return todoRepository.updateText(id, text);
-};
+    async fetchTodos(): Promise<Todo[]> {
+        return this.todoRepository.getAll();
+    }
 
-export const deleteTodo = async (id: string): Promise<void> => {
-    return todoRepository.delete(id);
-};
+    async updateTodoCompletion(id: string, completed: boolean): Promise<void> {
+        return this.todoRepository.updateCompletion(id, completed);
+    }
+
+    async updateTodoText(id: string, text: string): Promise<void> {
+        return this.todoRepository.updateText(id, text);
+    }
+
+    async deleteTodo(id: string): Promise<void> {
+        return this.todoRepository.delete(id);
+    }
+}
+
+const todoService = new TodoService(new FirebaseTodoRepository());
+
+export default todoService;

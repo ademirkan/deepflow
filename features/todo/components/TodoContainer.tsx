@@ -3,15 +3,9 @@
 import React, { useEffect, useState } from "react";
 import TodoList from "./TodoList";
 import CreateTodoItem from "./CreateTodoItem";
-import {
-    addTodo,
-    deleteTodo,
-    fetchTodos,
-    updateTodoCompletion,
-    updateTodoText,
-} from "@/service/todoService";
 import { Todo } from "@/types/todoTypes";
 import { useAuth } from "@/context/useAuth";
+import todoService from "@/service/todoService";
 
 const TodoContainer: React.FC = () => {
     const { user, loading: authLoading } = useAuth();
@@ -21,7 +15,7 @@ const TodoContainer: React.FC = () => {
 
     useEffect(() => {
         if (user) {
-            fetchTodos().then((fetchedTodos) => {
+            todoService.fetchTodos().then((fetchedTodos) => {
                 setTodos(fetchedTodos);
                 setLoading(false);
             });
@@ -46,17 +40,19 @@ const TodoContainer: React.FC = () => {
         );
 
         // Update server
-        updateTodoCompletion(id, !currentTodoStatus).catch((error: Error) => {
-            console.error(error);
-            // Rollback
-            setTodos((prevTodos) =>
-                prevTodos.map((todo) =>
-                    todo.id === id
-                        ? { ...todo, completed: currentTodoStatus }
-                        : todo
-                )
-            );
-        });
+        todoService
+            .updateTodoCompletion(id, !currentTodoStatus)
+            .catch((error: Error) => {
+                console.error(error);
+                // Rollback
+                setTodos((prevTodos) =>
+                    prevTodos.map((todo) =>
+                        todo.id === id
+                            ? { ...todo, completed: currentTodoStatus }
+                            : todo
+                    )
+                );
+            });
     };
 
     const handleEdit = (id: string, text: string): void => {
@@ -69,7 +65,7 @@ const TodoContainer: React.FC = () => {
             prevTodos.map((todo) => (todo.id === id ? { ...todo, text } : todo))
         );
 
-        updateTodoText(id, text).catch((error: Error) => {
+        todoService.updateTodoText(id, text).catch((error: Error) => {
             setTodos((prevTodos) =>
                 prevTodos.map((todo) => (todo.id === id ? currentTodo : todo))
             );
@@ -99,7 +95,8 @@ const TodoContainer: React.FC = () => {
         ]);
 
         // Add to server
-        addTodo(text)
+        todoService
+            .addTodo(text)
             .then((todo) => {
                 setTodos((prevTodos) =>
                     prevTodos.map((t) => (t.id === tempId ? todo : t))
@@ -123,7 +120,7 @@ const TodoContainer: React.FC = () => {
         setTodos((prevTodos) => prevTodos.filter((todo) => todo.id !== id));
 
         // Delete from server
-        deleteTodo(id).catch((error) => {
+        todoService.deleteTodo(id).catch((error) => {
             // Rollback
             setTodos((prevTodos) => [...prevTodos, currentTodo]);
         });
