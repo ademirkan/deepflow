@@ -5,9 +5,10 @@ import { Todo } from "@/types/todoTypes";
 type TodoListProps = {
     todos: Todo[];
     onToggle: (id: string) => void;
+    onDelete: (id: string) => void;
 };
 
-const TodoList: React.FC<TodoListProps> = ({ todos, onToggle }) => {
+const TodoList: React.FC<TodoListProps> = ({ todos, onToggle, onDelete }) => {
     return (
         <ul>
             {todos.map((todo) => (
@@ -16,6 +17,7 @@ const TodoList: React.FC<TodoListProps> = ({ todos, onToggle }) => {
                     text={todo.text}
                     completed={todo.completed}
                     onToggle={() => onToggle(todo.id)}
+                    onDelete={() => onDelete(todo.id)}
                 />
             ))}
         </ul>

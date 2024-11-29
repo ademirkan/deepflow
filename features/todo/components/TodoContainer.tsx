@@ -5,20 +5,30 @@ import TodoList from "./TodoList";
 import CreateTodoItem from "./CreateTodoItem";
 import {
     addTodo,
+    deleteTodo,
     fetchTodos,
     updateTodoCompletion,
 } from "@/service/todoService";
 import { Todo } from "@/types/todoTypes";
+import { useAuth } from "@/context/useAuth";
 
 const TodoContainer: React.FC = () => {
+    const { user, loading: authLoading } = useAuth();
     const [todos, setTodos] = useState<Todo[]>([]);
     const [isAdding, setIsAdding] = useState(false);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        fetchTodos().then((todos) => {
-            setTodos(todos);
-        });
-    }, []);
+        if (user) {
+            fetchTodos().then((fetchedTodos) => {
+                setTodos(fetchedTodos);
+                setLoading(false);
+            });
+        } else if (!authLoading) {
+            setTodos([]);
+            setLoading(false);
+        }
+    }, [user, authLoading]);
 
     const handleToggle = (id: string): void => {
         // Get current todo status
@@ -49,23 +59,33 @@ const TodoContainer: React.FC = () => {
     };
 
     const handleAddTodo = (text: string): void => {
+        if (!user) {
+            console.error("User is not authenticated.");
+            return;
+        }
+
         setIsAdding(false);
 
         // Optimistic update
         const tempId = Date.now().toString();
         setTodos((prevTodos) => [
             ...prevTodos,
-            { id: tempId, text, completed: false, uid: "" },
+            {
+                id: tempId,
+                text,
+                completed: false,
+                uid: user.uid,
+                createdAt: new Date(),
+                updatedAt: new Date(),
+            },
         ]);
 
         // Add to server
-        addTodo({ text, uid: "" })
-            .then((todoId) => {
-                // Update optimistic update to reflect server id
-                const todoToUpdate = todos.find((todo) => todo.id === tempId);
-                if (todoToUpdate) {
-                    todoToUpdate.id = todoId;
-                }
+        addTodo(text)
+            .then((todo) => {
+                setTodos((prevTodos) =>
+                    prevTodos.map((t) => (t.id === tempId ? todo : t))
+                );
             })
             .catch((error) => {
                 // Rollback
@@ -76,17 +96,46 @@ const TodoContainer: React.FC = () => {
             });
     };
 
+    const handleDeleteTodo = (id: string): void => {
+        const currentTodo = todos.find((todo) => todo.id === id);
+        if (!currentTodo) {
+            return;
+        }
+        // Optimistic update
+        setTodos((prevTodos) => prevTodos.filter((todo) => todo.id !== id));
+
+        // Delete from server
+        deleteTodo(id).catch((error) => {
+            // Rollback
+            setTodos((prevTodos) => [...prevTodos, currentTodo]);
+        });
+    };
+
+    if (authLoading || loading) {
+        return <div>Loading...</div>;
+    }
+
     return (
         <div>
             <h1>Todo List</h1>
-            <TodoList todos={todos} onToggle={handleToggle} />
-            {isAdding ? (
-                <CreateTodoItem
-                    onAdd={handleAddTodo}
-                    onCancel={() => setIsAdding(false)}
-                />
+            {user ? (
+                <>
+                    <TodoList
+                        todos={todos}
+                        onToggle={handleToggle}
+                        onDelete={handleDeleteTodo}
+                    />
+                    {isAdding ? (
+                        <CreateTodoItem
+                            onAdd={handleAddTodo}
+                            onCancel={() => setIsAdding(false)}
+                        />
+                    ) : (
+                        <button onClick={() => setIsAdding(true)}>+</button>
+                    )}
+                </>
             ) : (
-                <button onClick={() => setIsAdding(true)}>+</button>
+                <div>Please sign in to view your todos.</div>
             )}
         </div>
     );
