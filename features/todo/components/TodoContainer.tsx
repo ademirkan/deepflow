@@ -8,6 +8,7 @@ import {
     deleteTodo,
     fetchTodos,
     updateTodoCompletion,
+    updateTodoText,
 } from "@/service/todoService";
 import { Todo } from "@/types/todoTypes";
 import { useAuth } from "@/context/useAuth";
@@ -54,6 +55,23 @@ const TodoContainer: React.FC = () => {
                         ? { ...todo, completed: currentTodoStatus }
                         : todo
                 )
+            );
+        });
+    };
+
+    const handleEdit = (id: string, text: string): void => {
+        const currentTodo = todos.find((todo) => todo.id === id);
+        if (!currentTodo) {
+            return;
+        }
+
+        setTodos((prevTodos) =>
+            prevTodos.map((todo) => (todo.id === id ? { ...todo, text } : todo))
+        );
+
+        updateTodoText(id, text).catch((error: Error) => {
+            setTodos((prevTodos) =>
+                prevTodos.map((todo) => (todo.id === id ? currentTodo : todo))
             );
         });
     };
@@ -116,7 +134,7 @@ const TodoContainer: React.FC = () => {
     }
 
     return (
-        <div>
+        <div className="flex flex-col items-center justify-center">
             <h1>Todo List</h1>
             {user ? (
                 <>
@@ -124,6 +142,7 @@ const TodoContainer: React.FC = () => {
                         todos={todos}
                         onToggle={handleToggle}
                         onDelete={handleDeleteTodo}
+                        onEdit={handleEdit}
                     />
                     {isAdding ? (
                         <CreateTodoItem

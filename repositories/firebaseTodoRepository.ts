@@ -50,4 +50,12 @@ export class FirebaseTodoRepository implements TodoRepository {
         const todoDoc = doc(db, "todos", id);
         await deleteDoc(todoDoc);
     }
+
+    async updateText(id: string, text: string): Promise<void> {
+        const todoDoc = doc(db, "todos", id);
+        if (!todoDoc) {
+            return Promise.reject("Todo not found");
+        }
+        await updateDoc(todoDoc, { text, updatedAt: new Date() });
+    }
 }

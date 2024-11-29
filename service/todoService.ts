@@ -18,6 +18,13 @@ export const updateTodoCompletion = async (
     return todoRepository.updateCompletion(id, completed);
 };
 
+export const updateTodoText = async (
+    id: string,
+    text: string
+): Promise<void> => {
+    return todoRepository.updateText(id, text);
+};
+
 export const deleteTodo = async (id: string): Promise<void> => {
     return todoRepository.delete(id);
 };

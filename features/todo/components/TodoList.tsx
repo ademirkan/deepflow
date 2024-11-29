@@ -6,11 +6,17 @@ type TodoListProps = {
     todos: Todo[];
     onToggle: (id: string) => void;
     onDelete: (id: string) => void;
+    onEdit: (id: string, text: string) => void;
 };
 
-const TodoList: React.FC<TodoListProps> = ({ todos, onToggle, onDelete }) => {
+const TodoList: React.FC<TodoListProps> = ({
+    todos,
+    onToggle,
+    onDelete,
+    onEdit,
+}) => {
     return (
-        <ul>
+        <ul className="flex flex-col gap-2 relative w-64">
             {todos.map((todo) => (
                 <TodoItem
                     key={todo.id}
@@ -18,6 +24,7 @@ const TodoList: React.FC<TodoListProps> = ({ todos, onToggle, onDelete }) => {
                     completed={todo.completed}
                     onToggle={() => onToggle(todo.id)}
                     onDelete={() => onDelete(todo.id)}
+                    onEdit={(newText: string) => onEdit(todo.id, newText)}
                 />
             ))}
         </ul>
