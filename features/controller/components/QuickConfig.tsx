@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { Button } from "@/components/ui/button";
 
 const QuickConfig = () => {
     const [timerType, setTimerType] = useState<"stopwatch" | "pomodoro">(
@@ -13,69 +14,53 @@ const QuickConfig = () => {
     >(25);
 
     return (
-        <div className="flex flex-row gap-2">
+        <div className="flex flex-row gap-6">
             {timerType === "pomodoro" && (
-                <div
-                    id="countdown-config"
-                    className="flex flex-row gap-2 border-2"
-                >
-                    <button
+                <div id="countdown-config" className="flex flex-row gap-1">
+                    <Button
                         onClick={() => setAlarmActive(!alarmActive)}
-                        className={alarmActive ? "bg-blue-500 text-white" : ""}
+                        variant={alarmActive ? "default" : "ghost"}
                     >
                         alarm
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                         onClick={() => setOvertimeActive(!overtimeActive)}
-                        className={
-                            overtimeActive ? "bg-blue-500 text-white" : ""
-                        }
+                        variant={overtimeActive ? "default" : "ghost"}
                     >
                         overtime
-                    </button>
+                    </Button>
                 </div>
             )}
-            <div id="type-config" className="flex flex-row gap-2 border-2">
-                <button
+            <div id="type-config" className="flex flex-row gap-1">
+                <Button
                     onClick={() => setTimerType("pomodoro")}
-                    className={
-                        timerType === "pomodoro" ? "bg-blue-500 text-white" : ""
-                    }
+                    variant={timerType === "pomodoro" ? "default" : "ghost"}
                 >
                     pomodoro
-                </button>
-                <button
+                </Button>
+                <Button
                     onClick={() => setTimerType("stopwatch")}
-                    className={
-                        timerType === "stopwatch"
-                            ? "bg-blue-500 text-white"
-                            : ""
-                    }
+                    variant={timerType === "stopwatch" ? "default" : "ghost"}
                 >
                     stopwatch
-                </button>
+                </Button>
             </div>
             {timerType === "pomodoro" && (
-                <div
-                    id="pomodoro-config"
-                    className="flex flex-row gap-2 border-2"
-                >
+                <div id="pomodoro-config" className="flex flex-row gap-1">
                     {[15, 25, 60, 90, "custom" as const].map((time) => (
-                        <button
+                        <Button
                             key={time}
                             onClick={() =>
                                 setActivePomodoro(
                                     time as 15 | 25 | 60 | 90 | "custom"
                                 )
                             }
-                            className={
-                                activePomodoro === time
-                                    ? "bg-blue-500 text-white"
-                                    : ""
+                            variant={
+                                activePomodoro === time ? "default" : "ghost"
                             }
                         >
                             {time}
-                        </button>
+                        </Button>
                     ))}
                 </div>
             )}
