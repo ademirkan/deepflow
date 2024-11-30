@@ -1,13 +1,15 @@
 "use client";
 import Link from "next/link";
 import { useMediaQuery } from "react-responsive";
-import { googleSignIn, logOut } from "@/service/authService";
 import { useAuth } from "@/context/useAuth";
+import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
 export default function Header() {
     const isDesktopOrLaptop = useMediaQuery({
         query: "(min-width: 1224px)",
     });
-    const { user } = useAuth();
+    const { user, logOut, logInWithGoogle } = useAuth();
+    console.log(user);
+
     return (
         <header className="flex justify-between gap-[10px] items-center w-full">
             <div className="flex flex-row gap-6 items-center">
@@ -40,12 +42,20 @@ export default function Header() {
             </div>
 
             {user ? (
-                <div>
-                    <div>{user.email}</div>
+                <div className="flex flex-row gap-2 items-center">
+                    <Avatar>
+                        <AvatarImage
+                            src={user.image!}
+                            className="w-10 h-10 rounded-full"
+                            alt="profile picture"
+                        />
+                        <AvatarFallback>(faUser here)</AvatarFallback>
+                    </Avatar>
+                    <div>{user.name}</div>
                     <button onClick={logOut}>Sign out</button>
                 </div>
             ) : (
-                <button onClick={googleSignIn}>Sign in with Google</button>
+                <button onClick={logInWithGoogle}>Sign in with Google</button>
             )}
         </header>
     );
