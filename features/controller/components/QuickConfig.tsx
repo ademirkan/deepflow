@@ -15,22 +15,6 @@ const QuickConfig = () => {
 
     return (
         <div className="flex flex-row gap-6">
-            {timerType === "pomodoro" && (
-                <div id="countdown-config" className="flex flex-row gap-1">
-                    <Button
-                        onClick={() => setAlarmActive(!alarmActive)}
-                        variant={alarmActive ? "default" : "ghost"}
-                    >
-                        alarm
-                    </Button>
-                    <Button
-                        onClick={() => setOvertimeActive(!overtimeActive)}
-                        variant={overtimeActive ? "default" : "ghost"}
-                    >
-                        overtime
-                    </Button>
-                </div>
-            )}
             <div id="type-config" className="flex flex-row gap-1">
                 <Button
                     onClick={() => setTimerType("pomodoro")}
@@ -62,6 +46,23 @@ const QuickConfig = () => {
                             {time}
                         </Button>
                     ))}
+                </div>
+            )}
+            {timerType === "pomodoro" && (
+                <div id="countdown-config" className="flex flex-row gap-1">
+                    <Button
+                        onClick={() => setOvertimeActive(!overtimeActive)}
+                        variant={overtimeActive ? "default" : "ghost"}
+                    >
+                        overtime
+                    </Button>
+
+                    <Button
+                        onClick={() => setAlarmActive(!alarmActive)}
+                        variant={alarmActive ? "default" : "ghost"}
+                    >
+                        alarm
+                    </Button>
                 </div>
             )}
         </div>
