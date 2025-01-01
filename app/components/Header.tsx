@@ -8,7 +8,6 @@ export default function Header() {
         query: "(min-width: 1224px)",
     });
     const { user, logOut, logInWithGoogle } = useAuth();
-    console.log(user);
 
     return (
         <header className="flex justify-between gap-[10px] items-center w-full">
