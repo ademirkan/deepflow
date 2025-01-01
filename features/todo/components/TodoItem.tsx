@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import React, { useState, useRef, useEffect } from "react";
 
@@ -51,7 +52,9 @@ const TodoItem: React.FC<TodoItemProps> = ({
                     }`}
                 />
             </div>
-            <button onClick={onDelete}>Trash</button>
+            <Button size="sm" variant="destructive" onClick={onDelete}>
+                x
+            </Button>
         </li>
     );
 };
