@@ -1,7 +1,6 @@
 import { fetchCollectionWithFilter } from "@/lib/firebaseUtils";
 import { auth, db } from "@/lib/firebase";
-import { Todo } from "@/types/todoTypes";
-import { TodoRepository } from "@/types/todoTypes";
+import { Todo, TodoRepository } from "@/types/todoTypes";
 import {
     collection,
     addDoc,
