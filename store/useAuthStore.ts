@@ -1,6 +1,4 @@
-"use client";
-
-import React, { createContext, useContext, useState, useEffect } from "react";
+import { create } from "zustand";
 import {
     onAuthStateChanged,
     signInWithEmailAndPassword,
@@ -12,7 +10,7 @@ import {
 import { auth, googleProvider } from "@/lib/firebase";
 import { User, AuthResponse, AuthStatus } from "@/types/userTypes";
 
-interface AuthContextType {
+interface AuthState {
     user: User | null;
     accessToken: string | null;
     loading: boolean;
@@ -23,13 +21,7 @@ interface AuthContextType {
     logInWithGoogle: () => Promise<AuthResponse>;
 }
 
-const AuthContext = createContext<AuthContextType>({} as AuthContextType);
-
-export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-    const [user, setUser] = useState<User | null>(null);
-    const [accessToken, setAccessToken] = useState<string | null>(null);
-    const [loading, setLoading] = useState(true);
-
+const useAuthStore = create<AuthState>((set) => {
     const mapFirebaseUser = (fbUser: FirebaseUser): User => ({
         uid: fbUser.uid,
         email: fbUser.email,
@@ -43,7 +35,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     ): Promise<AuthResponse> => {
         const result = await signInWithEmailAndPassword(auth, email, password);
         const token = await result.user.getIdToken();
-        setAccessToken(token);
+        set({ accessToken: token, user: mapFirebaseUser(result.user) });
         return {
             user: mapFirebaseUser(result.user),
             accessToken: token,
@@ -60,7 +52,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             password
         );
         const token = await result.user.getIdToken();
-        setAccessToken(token);
+        set({ accessToken: token, user: mapFirebaseUser(result.user) });
         return {
             user: mapFirebaseUser(result.user),
             accessToken: token,
@@ -69,7 +61,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     const logOut = async (): Promise<void> => {
         await signOut(auth);
-        setAccessToken(null);
+        set({ accessToken: null, user: null });
     };
 
     const getAuthState = (): AuthStatus => {
@@ -79,45 +71,36 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const logInWithGoogle = async (): Promise<AuthResponse> => {
         const result = await signInWithPopup(auth, googleProvider);
         const token = await result.user.getIdToken();
-        setAccessToken(token);
+        set({ accessToken: token, user: mapFirebaseUser(result.user) });
         return {
             user: mapFirebaseUser(result.user),
             accessToken: token,
         };
     };
 
-    useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-            if (firebaseUser) {
-                setUser(mapFirebaseUser(firebaseUser));
-                const token = await firebaseUser.getIdToken();
-                setAccessToken(token);
-            } else {
-                setUser(null);
-                setAccessToken(null);
-            }
-            setLoading(false);
-        });
+    onAuthStateChanged(auth, async (firebaseUser) => {
+        if (firebaseUser) {
+            const token = await firebaseUser.getIdToken();
+            set({
+                user: mapFirebaseUser(firebaseUser),
+                accessToken: token,
+                loading: false,
+            });
+        } else {
+            set({ user: null, accessToken: null, loading: false });
+        }
+    });
 
-        return () => unsubscribe();
-    }, []);
+    return {
+        user: null,
+        accessToken: null,
+        loading: true,
+        logIn,
+        signUp,
+        logOut,
+        getAuthState,
+        logInWithGoogle,
+    };
+});
 
-    return (
-        <AuthContext.Provider
-            value={{
-                user,
-                accessToken,
-                loading,
-                logIn,
-                signUp,
-                logOut,
-                getAuthState,
-                logInWithGoogle,
-            }}
-        >
-            {!loading && children}
-        </AuthContext.Provider>
-    );
-};
-
-export const useAuth = () => useContext(AuthContext);
+export default useAuthStore;
