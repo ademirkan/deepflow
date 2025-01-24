@@ -38,4 +38,5 @@ export {
     onAuthStateChanged,
     signOut,
 };
+
 export default app;

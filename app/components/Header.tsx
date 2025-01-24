@@ -1,13 +1,13 @@
 "use client";
 import Link from "next/link";
 import { useMediaQuery } from "react-responsive";
-import { useAuth } from "@/context/useAuth";
+import useAuthStore from "@/store/useAuthStore";
 import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
 export default function Header() {
     const isDesktopOrLaptop = useMediaQuery({
         query: "(min-width: 1224px)",
     });
-    const { user, logOut, logInWithGoogle } = useAuth();
+    const { user, logOut, logInWithGoogle } = useAuthStore();
 
     return (
         <header className="flex justify-between gap-[10px] items-center w-full">

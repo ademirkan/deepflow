@@ -4,18 +4,18 @@ import React, { useEffect, useState } from "react";
 import TodoList from "./TodoList";
 import CreateTodoItem from "./CreateTodoItem";
 import { Todo } from "@/types/todoTypes";
-import { useAuth } from "@/context/useAuth";
+import useAuthStore from "@/store/useAuthStore";
 import todoService from "@/service/todoService";
 
 const TodoContainer: React.FC = () => {
-    const { user, loading: authLoading } = useAuth();
+    const { user, loading: authLoading } = useAuthStore();
     const [todos, setTodos] = useState<Todo[]>([]);
     const [isAdding, setIsAdding] = useState(false);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         if (user) {
-            todoService.fetchTodos().then((fetchedTodos) => {
+            todoService.fetchAllTodos().then((fetchedTodos) => {
                 setTodos(fetchedTodos);
                 setLoading(false);
             });
@@ -96,7 +96,7 @@ const TodoContainer: React.FC = () => {
 
         // Add to server
         todoService
-            .addTodo(text)
+            .createTodo(text)
             .then((todo) => {
                 setTodos((prevTodos) =>
                     prevTodos.map((t) => (t.id === tempId ? todo : t))
