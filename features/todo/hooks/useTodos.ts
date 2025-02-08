@@ -22,7 +22,7 @@ function useTodos() {
     const sortedTodos = todos.sort((a, b) => {
         if (a.completed && !b.completed) return 1;
         if (!a.completed && b.completed) return -1;
-        return b.updatedAt.getTime() - a.updatedAt.getTime();
+        return a.updatedAt.getTime() - b.updatedAt.getTime();
     });
 
     // Mutation to toggle a todo's completion status.
