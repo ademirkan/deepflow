@@ -8,9 +8,8 @@ import {
     doc,
     updateDoc,
     getDoc,
+    serverTimestamp,
 } from "firebase/firestore";
-
-import { serverTimestamp } from "firebase/database";
 
 interface TodoRepositoryInterface {
     create(item: string, userId?: string): Promise<Todo>;
@@ -59,11 +58,20 @@ export class FirebaseTodoRepository implements TodoRepositoryInterface {
         if (!todoDoc) {
             return Promise.reject("Todo not found");
         }
-        const todo = await getDoc(todoDoc);
-        if (!todo.exists()) {
+        const todoSnap = await getDoc(todoDoc);
+        if (!todoSnap.exists()) {
             return Promise.reject("Todo not found");
         }
-        return { id: todo.id, ...todo.data() } as Todo;
+        const data = todoSnap.data();
+
+        return {
+            id: todoSnap.id,
+            text: data.text,
+            completed: data.completed,
+            uid: data.uid,
+            createdAt: data.createdAt.toDate(),
+            updatedAt: data.updatedAt.toDate(),
+        } as Todo;
     }
 
     async update(
