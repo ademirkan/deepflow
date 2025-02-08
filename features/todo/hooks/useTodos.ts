@@ -201,6 +201,7 @@ function useTodos() {
         todos: sortedTodos,
         isLoading:
             isLoading ||
+            authLoading ||
             addMutation.isPending ||
             statusMutation.isPending ||
             deleteMutation.isPending ||
