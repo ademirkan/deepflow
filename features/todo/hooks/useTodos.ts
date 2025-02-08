@@ -18,6 +18,13 @@ function useTodos() {
 
     const todos = data ?? [];
 
+    // Sort todos by completed status and updatedAt date.
+    const sortedTodos = todos.sort((a, b) => {
+        if (a.completed && !b.completed) return 1;
+        if (!a.completed && b.completed) return -1;
+        return b.updatedAt.getTime() - a.updatedAt.getTime();
+    });
+
     // Mutation to toggle a todo's completion status.
     const statusMutation = useMutation({
         mutationFn: ({ id, newStatus }: { id: string; newStatus: boolean }) =>
@@ -35,7 +42,11 @@ function useTodos() {
                 (old: Todo[] | undefined) =>
                     old?.map((todo) =>
                         todo.id === id
-                            ? { ...todo, completed: newStatus }
+                            ? {
+                                  ...todo,
+                                  completed: newStatus,
+                                  updatedAt: new Date(),
+                              }
                             : todo
                     ) ?? []
             );
@@ -68,7 +79,9 @@ function useTodos() {
                 ["todos", user?.uid],
                 (old: Todo[] | undefined) =>
                     old?.map((todo) =>
-                        todo.id === id ? { ...todo, text } : todo
+                        todo.id === id
+                            ? { ...todo, text, updatedAt: new Date() }
+                            : todo
                     ) ?? []
             );
             return { previousTodos };
@@ -185,7 +198,7 @@ function useTodos() {
     };
 
     return {
-        todos,
+        todos: sortedTodos,
         isLoading:
             isLoading ||
             addMutation.isPending ||

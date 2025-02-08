@@ -1,4 +1,3 @@
-import { fetchCollectionWithFilter } from "@/lib/firebaseUtils";
 import { auth, db } from "@/lib/firebase";
 import { Todo } from "@/types/todoTypes";
 import {
@@ -9,6 +8,9 @@ import {
     updateDoc,
     getDoc,
     serverTimestamp,
+    getDocs,
+    query,
+    where,
 } from "firebase/firestore";
 
 interface TodoRepositoryInterface {
@@ -50,7 +52,27 @@ export class FirebaseTodoRepository implements TodoRepositoryInterface {
 
     async readAll(): Promise<Todo[]> {
         const uid = auth.currentUser?.uid;
-        return fetchCollectionWithFilter<Todo>("todos", "uid", uid);
+        if (!uid) {
+            throw new Error("User not authenticated");
+        }
+
+        const todosCollection = collection(db, "todos");
+        const q = query(todosCollection, where("uid", "==", uid));
+        const querySnapshot = await getDocs(q);
+
+        const todos: Todo[] = [];
+        querySnapshot.forEach((doc) => {
+            const data = doc.data();
+            todos.push({
+                id: doc.id,
+                text: data.text,
+                completed: data.completed,
+                uid: data.uid,
+                createdAt: data.createdAt.toDate(),
+                updatedAt: data.updatedAt.toDate(),
+            });
+        });
+        return todos;
     }
 
     async readById(id: string): Promise<Todo> {
