@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { persist, subscribeWithSelector } from "zustand/middleware";
-import deepMerge from "@/util/deepMerge";
+import { deepMerge } from "@/util/deepMerge";
 import preferencesService from "@/service/preferencesService";
 import useAuthStore from "@/store/auth";
 import { PREFERENCES_STORAGE_KEY } from "@/constants/cacheKeys";
