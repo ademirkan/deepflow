@@ -1,5 +1,5 @@
-import { ConfigPreferences, DeepPartial } from "@/types/preferenceTypes";
-import deepMerge from "@/util/deepMerge";
+import { ConfigPreferences } from "@/types/preferenceTypes";
+import { deepMerge, DeepPartial } from "@/util/deepMerge";
 import preferencesService from "@/service/preferencesService";
 import useAuthStore from "@/store/auth";
 import { defaultConfigPreferences } from "@/constants/defaultPreferences";

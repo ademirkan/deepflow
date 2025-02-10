@@ -1,7 +1,11 @@
+export type DeepPartial<T> = {
+    [P in keyof T]?: T[P] extends object ? DeepPartial<T[P]> : T[P];
+};
+
 // A generic recursive deep merge function.
 // It will merge the source object into the target object,
 // recursing into any properties that are objects.
-const deepMerge = (target: any, source: any): any => {
+export const deepMerge = (target: any, source: any): any => {
     // If either target or source is not an object, return source.
     if (typeof target !== "object" || target === null) return source;
     if (typeof source !== "object" || source === null) return source;
@@ -29,5 +33,3 @@ const deepMerge = (target: any, source: any): any => {
 
     return output;
 };
-
-export default deepMerge;

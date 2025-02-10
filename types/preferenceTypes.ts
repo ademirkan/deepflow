@@ -1,7 +1,3 @@
-export type DeepPartial<T> = {
-    [P in keyof T]?: T[P] extends object ? DeepPartial<T[P]> : T[P];
-};
-
 // Root preference type
 export type Preferences = {
     configPreferences: ConfigPreferences;
