@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useMediaQuery } from "react-responsive";
-import useAuthStore from "@/store/useAuthStore";
+import useAuthStore from "@/store/auth";
 import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
 export default function Header() {
     const isDesktopOrLaptop = useMediaQuery({
