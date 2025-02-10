@@ -1,46 +1,72 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { Button } from "@/components/ui/button";
+import { usePreferencesStore } from "@/store/preferences";
 
 const QuickConfig = () => {
-    const [timerType, setTimerType] = useState<"stopwatch" | "pomodoro">(
-        "pomodoro"
-    );
-    const [alarmActive, setAlarmActive] = useState(false);
-    const [overtimeActive, setOvertimeActive] = useState(false);
-    const [activePomodoro, setActivePomodoro] = useState<
-        15 | 25 | 60 | 90 | "custom"
-    >(25);
+    // Access state and actions from the store
+    const {
+        configPreferences,
+        setConfigPreferences,
+        updateConfigPreferences,
+        refreshPreferences,
+    } = usePreferencesStore((state) => ({
+        configPreferences: state.configPreferences,
+        setConfigPreferences: state.setConfigPreferences,
+        updateConfigPreferences: state.updateConfigPreferences,
+        refreshPreferences: state.refreshPreferences,
+    }));
+
+    const { type, alarmActive, overtimeActive, pomodoro } = configPreferences;
 
     return (
         <div className="flex flex-row gap-6">
             <div id="type-config" className="flex flex-row gap-1">
                 <Button
-                    onClick={() => setTimerType("pomodoro")}
-                    variant={timerType === "pomodoro" ? "default" : "ghost"}
+                    onClick={() =>
+                        updateConfigPreferences({ type: "pomodoro" })
+                    }
+                    variant={type === "pomodoro" ? "default" : "ghost"}
                 >
                     pomodoro
                 </Button>
                 <Button
-                    onClick={() => setTimerType("stopwatch")}
-                    variant={timerType === "stopwatch" ? "default" : "ghost"}
+                    onClick={() =>
+                        updateConfigPreferences({ type: "countdown" })
+                    }
+                    variant={type === "countdown" ? "default" : "ghost"}
+                >
+                    countdown
+                </Button>
+                <Button
+                    onClick={() =>
+                        updateConfigPreferences({ type: "stopwatch" })
+                    }
+                    variant={type === "stopwatch" ? "default" : "ghost"}
                 >
                     stopwatch
                 </Button>
             </div>
-            {timerType === "pomodoro" && (
+            {(type === "countdown" || type === "pomodoro") && (
                 <div id="pomodoro-config" className="flex flex-row gap-1">
-                    {[15, 25, 60, 90, "custom" as const].map((time) => (
+                    {["15", "25", "60", "90", "custom"].map((time) => (
                         <Button
                             key={time}
-                            onClick={() =>
-                                setActivePomodoro(
-                                    time as 15 | 25 | 60 | 90 | "custom"
-                                )
-                            }
+                            onClick={() => {
+                                updateConfigPreferences({
+                                    pomodoro: {
+                                        preset: time as
+                                            | "15"
+                                            | "25"
+                                            | "60"
+                                            | "90"
+                                            | "custom",
+                                    },
+                                });
+                            }}
                             variant={
-                                activePomodoro === time ? "default" : "ghost"
+                                pomodoro.preset === time ? "default" : "ghost"
                             }
                         >
                             {time}
@@ -48,17 +74,25 @@ const QuickConfig = () => {
                     ))}
                 </div>
             )}
-            {timerType === "pomodoro" && (
+            {(type === "pomodoro" || type === "countdown") && (
                 <div id="countdown-config" className="flex flex-row gap-1">
                     <Button
-                        onClick={() => setOvertimeActive(!overtimeActive)}
+                        onClick={() =>
+                            updateConfigPreferences({
+                                overtimeActive: !overtimeActive,
+                            })
+                        }
                         variant={overtimeActive ? "default" : "ghost"}
                     >
                         overtime
                     </Button>
 
                     <Button
-                        onClick={() => setAlarmActive(!alarmActive)}
+                        onClick={() =>
+                            updateConfigPreferences({
+                                alarmActive: !alarmActive,
+                            })
+                        }
                         variant={alarmActive ? "default" : "ghost"}
                     >
                         alarm
