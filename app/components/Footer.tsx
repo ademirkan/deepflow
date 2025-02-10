@@ -2,7 +2,7 @@
 
 import { useMediaQuery } from "react-responsive";
 
-export default function Header() {
+export default function Footer() {
     const isDesktopOrLaptop = useMediaQuery({
         query: "(min-width: 1224px)",
     });
