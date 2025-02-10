@@ -1,4 +1,4 @@
-import { auth, db } from "@/lib/firebase";
+import { db } from "@/lib/firebase";
 import { Todo } from "@/types/todoTypes";
 import {
     collection,
@@ -14,19 +14,18 @@ import {
 } from "firebase/firestore";
 
 interface TodoRepositoryInterface {
-    create(item: string, userId?: string): Promise<Todo>;
-    readAll(userId?: string): Promise<Todo[]>;
-    readById(id: string, userId?: string): Promise<Todo>;
+    create(uid: string, item: string): Promise<Todo>;
+    readAll(uid: string): Promise<Todo[]>;
+    readById(uid: string, id: string): Promise<Todo>;
     update(
-        item: Partial<Todo> & Pick<Todo, "id">,
-        userId?: string
-    ): Promise<Partial<Todo>>;
-    delete(id: string, userId?: string): Promise<void>;
+        uid: string,
+        item: Partial<Todo> & Pick<Todo, "id">
+    ): Promise<Partial<Todo> & Pick<Todo, "id" | "updatedAt">>;
+    delete(uid: string, id: string): Promise<void>;
 }
 
 export class FirebaseTodoRepository implements TodoRepositoryInterface {
-    async create(item: string): Promise<Todo> {
-        const uid = auth.currentUser?.uid;
+    async create(uid: string, item: string): Promise<Todo> {
         if (!uid) {
             throw new Error("User not authenticated");
         }
@@ -50,8 +49,7 @@ export class FirebaseTodoRepository implements TodoRepositoryInterface {
         };
     }
 
-    async readAll(): Promise<Todo[]> {
-        const uid = auth.currentUser?.uid;
+    async readAll(uid: string): Promise<Todo[]> {
         if (!uid) {
             throw new Error("User not authenticated");
         }
@@ -75,7 +73,11 @@ export class FirebaseTodoRepository implements TodoRepositoryInterface {
         return todos;
     }
 
-    async readById(id: string): Promise<Todo> {
+    async readById(uid: string, id: string): Promise<Todo> {
+        if (!uid) {
+            throw new Error("User not authenticated");
+        }
+
         const todoDoc = doc(db, "todos", id);
         if (!todoDoc) {
             return Promise.reject("Todo not found");
@@ -97,8 +99,13 @@ export class FirebaseTodoRepository implements TodoRepositoryInterface {
     }
 
     async update(
+        uid: string,
         item: Partial<Todo> & Pick<Todo, "id">
     ): Promise<Partial<Todo> & Pick<Todo, "id" | "updatedAt">> {
+        if (!uid) {
+            throw new Error("User not authenticated");
+        }
+
         const todoDoc = doc(db, "todos", item.id);
         if (!todoDoc) {
             return Promise.reject("Todo not found");
@@ -118,7 +125,11 @@ export class FirebaseTodoRepository implements TodoRepositoryInterface {
         };
     }
 
-    async delete(id: string): Promise<void> {
+    async delete(uid: string, id: string): Promise<void> {
+        if (!uid) {
+            throw new Error("User not authenticated");
+        }
+
         const todoDoc = doc(db, "todos", id);
         await deleteDoc(todoDoc);
     }

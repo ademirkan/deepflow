@@ -1,4 +1,3 @@
-// errorService.ts
 import { FirebaseError } from "firebase/app";
 
 export const getErrorMessage = (error: unknown): string => {
