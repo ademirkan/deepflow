@@ -7,5 +7,5 @@ export default function Footer() {
         query: "(min-width: 1224px)",
     });
 
-    return <footer>footer</footer>;
+    return <footer>footer yeeeet</footer>;
 }
