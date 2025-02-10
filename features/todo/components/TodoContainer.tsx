@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import TodoList from "./TodoList";
 import CreateTodoItem from "./CreateTodoItem";
-import useAuthStore from "@/store/useAuthStore";
+import useAuthStore from "@/store/auth";
 import useTodos from "../hooks/useTodos";
 
 const TodoContainer: React.FC = () => {
