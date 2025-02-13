@@ -1,5 +1,5 @@
-import { FirebaseAuthRepository } from "@/repositories/authRepository";
-import { User, AuthResponse, AuthStatus } from "@/types/userTypes";
+import { FirebaseAuthRepository } from "@/repositories/auth";
+import { User, AuthResponse, AuthStatus } from "@/types/user";
 
 class AuthService {
     private authRepo = new FirebaseAuthRepository();
@@ -16,19 +16,15 @@ class AuthService {
 
     async logIn(email: string, password: string): Promise<AuthResponse> {
         const result = await this.authRepo.signIn(email, password);
-        const token = await result.user.getIdToken();
         return {
             user: this.mapFirebaseUser(result.user),
-            accessToken: token,
         };
     }
 
     async signUp(email: string, password: string): Promise<AuthResponse> {
         const result = await this.authRepo.signUp(email, password);
-        const token = await result.user.getIdToken();
         return {
             user: this.mapFirebaseUser(result.user),
-            accessToken: token,
         };
     }
 
@@ -44,10 +40,8 @@ class AuthService {
 
     async logInWithGoogle(): Promise<AuthResponse> {
         const result = await this.authRepo.signInWithGoogle();
-        const token = await result.user.getIdToken();
         return {
             user: this.mapFirebaseUser(result.user),
-            accessToken: token,
         };
     }
 

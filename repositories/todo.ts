@@ -1,5 +1,5 @@
 import { db } from "@/lib/firebase";
-import { Todo } from "@/types/todoTypes";
+import { Todo } from "@/types/todo";
 import {
     collection,
     addDoc,

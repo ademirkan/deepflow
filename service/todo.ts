@@ -1,5 +1,5 @@
-import { Todo } from "@/types/todoTypes";
-import { FirebaseTodoRepository } from "@/repositories/todoRepository";
+import { Todo } from "@/types/todo";
+import { FirebaseTodoRepository } from "@/repositories/todo";
 import useAuthStore from "@/store/auth";
 
 class TodoService {

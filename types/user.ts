@@ -7,7 +7,6 @@ export type User = {
 
 export type AuthResponse = {
     user: User | null; // Authenticated user details
-    accessToken?: string; // Optional access token (if needed)
 };
 
 export type AuthStatus = "authenticated" | "unauthenticated" | "loading";

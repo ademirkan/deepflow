@@ -1,6 +1,6 @@
-import { ConfigPreferences, Preferences } from "@/types/preferenceTypes";
+import { ConfigSettings, Settings, ThemeSettings } from "@/types/settings";
 
-export const defaultConfigPreferences: ConfigPreferences = {
+export const DEFAULT_CONFIG_SETTINGS: ConfigSettings = {
     alarmActive: true,
     overtimeActive: false,
     type: "pomodoro" as "pomodoro" | "countdown" | "stopwatch",
@@ -19,6 +19,11 @@ export const defaultConfigPreferences: ConfigPreferences = {
     },
 };
 
-export const defaultPreferences: Preferences = {
-    configPreferences: defaultConfigPreferences,
+export const DEFAULT_THEME_SETTINGS: ThemeSettings = {
+    theme: "light" as "light" | "dark",
+};
+
+export const DEFAULT_SETTINGS: Settings = {
+    config: DEFAULT_CONFIG_SETTINGS,
+    theme: DEFAULT_THEME_SETTINGS,
 };

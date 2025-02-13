@@ -1,6 +1,6 @@
 import { auth, db } from "@/lib/firebase";
 import { doc, updateDoc, getDoc, onSnapshot } from "firebase/firestore";
-import { Timer, TimerRepository } from "@/types/timerTypes";
+import { Timer, TimerRepository } from "@/types/timer";
 
 export class FirebaseTimerRepository implements TimerRepository {
     async getTimer(id: string): Promise<Timer> {

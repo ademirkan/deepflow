@@ -2,30 +2,20 @@
 
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { usePreferencesStore } from "@/store/preferences";
+import { useSettings } from "@/hooks/useSettings";
 
 const QuickConfig = () => {
     // Access state and actions from the store
-    const {
-        configPreferences,
-        setConfigPreferences,
-        updateConfigPreferences,
-        refreshPreferences,
-    } = usePreferencesStore((state) => ({
-        configPreferences: state.configPreferences,
-        setConfigPreferences: state.setConfigPreferences,
-        updateConfigPreferences: state.updateConfigPreferences,
-        refreshPreferences: state.refreshPreferences,
-    }));
+    const { config, updateSettings } = useSettings();
 
-    const { type, alarmActive, overtimeActive, pomodoro } = configPreferences;
+    const { type, alarmActive, overtimeActive, pomodoro } = config;
 
     return (
         <div className="flex flex-row gap-6">
             <div id="type-config" className="flex flex-row gap-1">
                 <Button
                     onClick={() =>
-                        updateConfigPreferences({ type: "pomodoro" })
+                        updateSettings({ config: { type: "pomodoro" } })
                     }
                     variant={type === "pomodoro" ? "default" : "ghost"}
                 >
@@ -33,7 +23,7 @@ const QuickConfig = () => {
                 </Button>
                 <Button
                     onClick={() =>
-                        updateConfigPreferences({ type: "countdown" })
+                        updateSettings({ config: { type: "countdown" } })
                     }
                     variant={type === "countdown" ? "default" : "ghost"}
                 >
@@ -41,7 +31,7 @@ const QuickConfig = () => {
                 </Button>
                 <Button
                     onClick={() =>
-                        updateConfigPreferences({ type: "stopwatch" })
+                        updateSettings({ config: { type: "stopwatch" } })
                     }
                     variant={type === "stopwatch" ? "default" : "ghost"}
                 >
@@ -54,14 +44,16 @@ const QuickConfig = () => {
                         <Button
                             key={time}
                             onClick={() => {
-                                updateConfigPreferences({
-                                    pomodoro: {
-                                        preset: time as
-                                            | "15"
-                                            | "25"
-                                            | "60"
-                                            | "90"
-                                            | "custom",
+                                updateSettings({
+                                    config: {
+                                        pomodoro: {
+                                            preset: time as
+                                                | "15"
+                                                | "25"
+                                                | "60"
+                                                | "90"
+                                                | "custom",
+                                        },
                                     },
                                 });
                             }}
@@ -78,8 +70,10 @@ const QuickConfig = () => {
                 <div id="countdown-config" className="flex flex-row gap-1">
                     <Button
                         onClick={() =>
-                            updateConfigPreferences({
-                                overtimeActive: !overtimeActive,
+                            updateSettings({
+                                config: {
+                                    overtimeActive: !overtimeActive,
+                                },
                             })
                         }
                         variant={overtimeActive ? "default" : "ghost"}
@@ -89,8 +83,10 @@ const QuickConfig = () => {
 
                     <Button
                         onClick={() =>
-                            updateConfigPreferences({
-                                alarmActive: !alarmActive,
+                            updateSettings({
+                                config: {
+                                    alarmActive: !alarmActive,
+                                },
                             })
                         }
                         variant={alarmActive ? "default" : "ghost"}

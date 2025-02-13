@@ -8,15 +8,7 @@ import useTodos from "../hooks/useTodos";
 
 const TodoContainer: React.FC = () => {
     const { user, loading: authLoading } = useAuthStore();
-    const {
-        todos,
-        isLoading,
-        isError,
-        toggleTodo,
-        editTodo,
-        addTodo,
-        deleteTodo,
-    } = useTodos();
+    const { todos, toggleTodo, editTodo, addTodo, deleteTodo } = useTodos();
 
     // Local state to control whether we're adding a new todo.
     const [isAdding, setIsAdding] = useState(false);

@@ -1,10 +1,11 @@
-// Root preference type
-export type Preferences = {
-    configPreferences: ConfigPreferences;
-    // Add other preference types here
+// Root setting type
+export type Settings = {
+    config: ConfigSettings;
+    theme: ThemeSettings;
+    // Add other setting types here
 };
 
-export interface ConfigPreferences {
+export interface ConfigSettings {
     alarmActive: boolean;
     overtimeActive: boolean;
     type: "pomodoro" | "countdown" | "stopwatch";
@@ -23,3 +24,7 @@ export interface ConfigPreferences {
     };
     // stopwatch: {};
 }
+
+export type ThemeSettings = {
+    theme: "light" | "dark";
+};

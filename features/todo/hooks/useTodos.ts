@@ -1,7 +1,7 @@
 "use client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Todo } from "@/types/todoTypes";
-import todoService from "@/service/todoService";
+import { Todo } from "@/types/todo";
+import todoService from "@/service/todo";
 import useAuthStore from "@/store/auth";
 
 function useTodos() {
