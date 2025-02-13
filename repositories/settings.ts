@@ -42,8 +42,6 @@ export class FirebaseSettingsRepository implements SettingsRepositoryInterface {
     }
 
     async set(uid: string, settings: Settings): Promise<Settings> {
-        console.log("settings", settings);
-        console.log("uid", uid);
         if (!uid) {
             throw new Error("User not authenticated");
         }
