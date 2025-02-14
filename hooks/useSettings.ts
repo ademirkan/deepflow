@@ -21,7 +21,6 @@ export const useSettings = () => {
     if (!debouncedServiceCallRef.current) {
         debouncedServiceCallRef.current = _.debounce(
             (updatedSettings: Settings) => {
-                console.log("debounce end");
                 settingsService.setSettings(updatedSettings);
             },
             DEBOUNCE_TIME
@@ -35,10 +34,8 @@ export const useSettings = () => {
             theme: settings.theme,
         };
         const mergedSettings: Settings = _.merge(settingsObject, update);
-        console.log("mergedSettings", mergedSettings);
         settings.update(mergedSettings);
 
-        console.log("debounce start");
         // Debounced service call
         debouncedServiceCallRef.current!(mergedSettings);
     };
