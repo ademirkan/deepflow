@@ -5,6 +5,7 @@ import {
     signInWithPopup,
     onAuthStateChanged,
     User as FirebaseUser,
+    signInAnonymously,
 } from "firebase/auth";
 import { auth, googleProvider } from "@/lib/firebase";
 
@@ -31,5 +32,9 @@ export class FirebaseAuthRepository {
 
     onAuthStateChanged(callback: (user: FirebaseUser | null) => void) {
         return onAuthStateChanged(auth, callback);
+    }
+
+    signInAnonymously() {
+        return signInAnonymously(auth);
     }
 }

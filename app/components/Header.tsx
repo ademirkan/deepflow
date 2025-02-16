@@ -7,7 +7,7 @@ export default function Header() {
     const isDesktopOrLaptop = useMediaQuery({
         query: "(min-width: 1224px)",
     });
-    const { user, logOut, logInWithGoogle } = useAuthStore();
+    const { user, loading, logOut, logInWithGoogle } = useAuthStore();
 
     return (
         <header className="flex justify-between gap-[10px] items-center w-full">
@@ -40,7 +40,9 @@ export default function Header() {
                 <nav>nav</nav>
             </div>
 
-            {user ? (
+            {loading ? (
+                <div>Loading...</div>
+            ) : user ? (
                 <div className="flex flex-row gap-2 items-center">
                     <Avatar>
                         <AvatarImage

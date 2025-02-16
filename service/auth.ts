@@ -11,6 +11,7 @@ class AuthService {
             email: fbUser.email,
             name: fbUser.displayName,
             image: fbUser.photoURL,
+            isAnonymous: fbUser.isAnonymous,
         };
     }
 
@@ -28,14 +29,36 @@ class AuthService {
         };
     }
 
-    async logOut(): Promise<void> {
-        await this.authRepo.signOut();
+    async signInAnonymously(): Promise<AuthResponse> {
+        const result = await this.authRepo.signInAnonymously();
+        return {
+            user: this.mapFirebaseUser(result.user),
+        };
     }
 
+    /**
+     * Signs the user out.
+     * This method is now decoupled from signing in anonymously.
+     */
+    async logOut(): Promise<AuthResponse> {
+        await this.authRepo.signOut();
+        return {
+            user: null,
+        };
+    }
+
+    /**
+     * Returns the current auth status.
+     * If there is no user, we consider the state "unauthenticated".
+     * If the current user is anonymous, we consider the user a "guest".
+     */
     getAuthState(): AuthStatus {
-        return this.authRepo.getCurrentUser()
-            ? "authenticated"
-            : "unauthenticated";
+        const fbUser = this.authRepo.getCurrentUser();
+        if (!fbUser) {
+            return "loading";
+        }
+
+        return fbUser.isAnonymous ? "guest" : "authenticated";
     }
 
     async logInWithGoogle(): Promise<AuthResponse> {
@@ -45,13 +68,17 @@ class AuthService {
         };
     }
 
-    // This method provides a callback-based listener for auth state changes.
+    /**
+     * Provides a callback-based listener for auth state changes.
+     * If there is no active Firebase user, for example after a sign-out,
+     * the callback will be triggered with null.
+     */
     onAuthStateChanged(callback: (user: User | null) => void) {
-        return this.authRepo.onAuthStateChanged(async (firebaseUser) => {
-            if (firebaseUser) {
-                callback(this.mapFirebaseUser(firebaseUser));
-            } else {
+        return this.authRepo.onAuthStateChanged((firebaseUser) => {
+            if (!firebaseUser) {
                 callback(null);
+            } else {
+                callback(this.mapFirebaseUser(firebaseUser));
             }
         });
     }
